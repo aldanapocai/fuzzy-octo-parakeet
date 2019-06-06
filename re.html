@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jquery Ajax</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
+        </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Formulario de envío</h1>
+        <hr>
+        <form novalidate>
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" onblur="validar(this)" id="nombre"
+                    placeholder="Entre su nombre">
+
+                <div id="error-nombre" class="alert alert-danger mt-1">
+                    Campo no válido
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input type="text" class="form-control" onblur="validar(this)" id="apellido"
+                    placeholder="Entre su apellido">
+
+                <div id="error-apellido" class="alert alert-danger mt-1">
+                    Campo no válido
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="edad">Edad</label>
+                <input type="number" class="form-control" onblur="validar(this)" id="edad" placeholder="Entre su edad">
+
+                <div id="error-edad" class="alert alert-danger mt-1">
+                    Campo no válido
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" onblur="validar(this)" id="email" aria-describedby="emailHelp"
+                    placeholder="Entre su email">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                    else.</small>
+
+                <div id="error-email" class="alert alert-danger mt-1">
+                    Campo no válido
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" class="form-control" onblur="validar(this)" id="password"
+                    placeholder="Contraseña">
+
+                <div id="error-password" class="alert alert-danger mt-1">
+                    Campo no válido
+                </div>
+            </div>
+
+            <button type="button" id="boton-enviar" class="btn btn-primary">Enviar</button>
+
+        </form>
+
+        <div class="jumbotron mt-3">
+            <button class="btn btn-success" id="leer-datos">LEER DATOS</button>
+            <button class="btn btn-warning" id="enviar-datos">ENVIAR DATOS</button>
+        </div>
+    </div>
+
+    <script>
+
+        console.log('Expresiones regulares');
+        var regExp1=/^c?o{3,5}[a-z][aeiou]$/i;  // \w para caracteres alfanumericos \d es numerico 
+        var texto ='Coootu';
+//la i lo hace case insensitive
+
+        var rta=regExp1.test(texto);
+        console.log(rta);
+
+
+        var datosFormulario = {};
+
+        function validar(e) {
+            //console.log(e);
+            var id = e.id;
+            var dato = $('#' + id).val();
+            console.log(id, dato);
+            if (dato != "") {
+                $('#error-'+id).hide();
+                datosFormulario[id] = dato;
+            }
+            else {
+                $('#error-'+id).show();
+            }
+        }
+
+        $(document).ready(function () {
+
+            var usuario = {
+                nombre: "Paula",
+                edad: 26
+            };
+
+            $('#boton-enviar').click(function () {
+                console.log(datosFormulario);
+                if (Object.keys(datosFormulario).length == 5) {
+                    enviarDatosPost(datosFormulario);
+                    datosFormulario = {};
+                    //console.log($('form'));
+                    $('form')[0].reset();
+                    console.log('OK ENVIO');
+                }
+            })
+
+            function leerDatosGet() {
+                $.ajax({
+                    url: 'https://5c8ef17a3e557700145e85c7.mockapi.io/datos',
+                    type: 'get',
+                    success: function (data, textStatus, jQxhr) {
+                        console.log('OK!', data);
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+            }
+
+            function enviarDatosPost(datos) {
+                $.ajax({
+                    url: 'https://5c8ef17a3e557700145e85c7.mockapi.io/datos',
+                    dataType: 'json',
+                    type: 'post',
+                    data: datos,
+                    success: function (data, textStatus, jQxhr) {
+                        console.log('OK!', data);
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+            }
+
+            /*
+            $('#leer-datos').click(function(){
+                leerDatosGet();
+            })
+            */
+            $('#leer-datos').click(leerDatosGet);
+
+            $('#enviar-datos').click(function () {
+                enviarDatosPost(usuario);
+            })
+
+            /*
+            $('#nombre').blur(function(){
+                console.log('blur nombre');
+            });
+            */
+            console.log('Documento LISTO!!!!!');
+
+            $('#error-nombre').hide();
+            $('#error-apellido').hide();
+            $('#error-edad').hide();
+            $('#error-email').hide();
+            $('#error-password').hide();
+        })
+
+
+    </script>
+
+
+</body>
+
+</html>
